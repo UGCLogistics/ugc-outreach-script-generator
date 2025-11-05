@@ -77,8 +77,8 @@
     <!-- Kontainer utama dengan lebar maksimum baru untuk 3 kolom -->
     <div class="max-w-7xl mx-auto">
         <header class="text-center mb-8">
-            <!-- Logo Ditambahkan -->
-            <img src="https://i.ibb.co/6y40g3S/UGC-LOGO-WHITE-01-1.png" alt="Logo PT Utama Globalindo Cargo" class="mx-auto h-16 w-auto mb-4"
+            <!-- LOGO DIPERBARUI: Sekarang menggunakan jalur relatif (relative path) -->
+            <img src="logo.png" alt="Logo UGC Logistics" class="mx-auto h-16 w-auto mb-4"
                  onerror="this.onerror=null; this.src='https://placehold.co/300x80/020617/FFFFFF?text=Logo+UGC&font=inter';">
             
             <h1 class="text-3xl md:text-4xl font-bold text-white">Generator Outreach Script</h1>
@@ -357,8 +357,13 @@
         const copyBuffer = document.getElementById('copyBuffer');
 
         // --- Variabel API ---
-        // Panggil proxy Netlify, bukan API Google secara langsung
-        const proxyApiUrl = "/.netlify/functions/generate-script";
+        // CATATAN: Ini adalah Panggilan API Langsung. Ini HANYA akan berfungsi di lingkungan
+        // di mana Kunci API dapat diinjeksi secara otomatis (seperti lingkungan Canvas ini).
+        // Ini TIDAK akan berfungsi jika Anda mendeploy file ini ke Netlify TANPA
+        // mengubah kembali logika untuk memanggil proxyApiUrl.
+        const apiKey = ""; // Kunci API akan diinjeksi oleh lingkungan
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+        
         
         // --- Event Listeners ---
         generateButton.addEventListener('click', generateScript);
@@ -509,26 +514,38 @@ Alamat Perusahaan: ${inputs.companyAddress}
 Tugas: Tuliskan skrip outreach sekarang.
 `;
 
-            // 5. Panggil API Proxy Netlify
+            // 5. Panggil API
             try {
-                // Mengirim kedua prompt ke backend proxy kita
-                const response = await fetch(proxyApiUrl, {
+                // Mengirim kedua prompt ke API
+                const response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ systemPrompt, userPrompt })
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: userPrompt }] }],
+                        systemInstruction: { parts: [{ text: systemPrompt }] }
+                    })
                 });
+                
+                if (!response.ok) {
+                    const errorBody = await response.text();
+                    throw new Error(`HTTP error! status: ${response.status}, body: ${errorBody}`);
+                }
 
                 const result = await response.json();
 
-                if (!response.ok) {
-                    throw new Error(result.error || `HTTP error! status: ${response.status}`);
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    
+                    displayResult(result.candidates[0].content.parts[0].text);
+                } else {
+                    // Penanganan jika respons valid tapi tidak ada konten (misal: safety filter)
+                    displayError("Maaf, AI tidak dapat menghasilkan respons untuk permintaan ini. Coba ubah input Anda.");
                 }
 
-                displayResult(result.text);
-
             } catch (error) {
-                console.error("Error calling proxy API:", error);
-                displayError(`Terjadi kesalahan saat menghubungi server proxy: ${error.message}`);
+                console.error("Error calling API:", error);
+                displayError(`Terjadi kesalahan saat menghubungi API: ${error.message}`);
             } finally {
                 showLoading(false);
             }
