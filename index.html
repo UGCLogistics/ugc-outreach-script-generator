@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Rangkaian Outreach</title>
+    <!-- Memuat Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Menggunakan font Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617; /* Dark mode background - Near Black (slate-950) */
+            /* Dekorasi abstract fade baru menggunakan warna aksen */
+            background-image: radial-gradient(at 50% 0%, rgba(255, 70, 0, 0.15), transparent 50%);
+            color: #F9FAFB; /* Light text */
+        }
+        /* Kustomisasi scrollbar untuk tampilan yang lebih rapi */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1F2937;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4B5563;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6B7280;
+        }
+        /* Loader/Spinner */
+        .loader {
+            border: 4px solid #374151; /* gray-700 */
+            border-top: 4px solid #ff4600; /* WARNA AKSEN BARU */
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Style untuk input */
+        .form-input, .form-select {
+            background-color: rgba(15, 23, 42, 0.6); /* bg-slate-900/60 */
+            border: 1px solid rgba(255, 255, 255, 0.1); /* border-white/10 */
+            color: #F9FAFB;
+            border-radius: 0.5rem; /* rounded-lg */
+            padding: 0.75rem 1rem;
+            width: 100%;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            backdrop-filter: blur(5px);
+        }
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #ff4600; /* WARNA AKSEN BARU */
+            box-shadow: 0 0 0 2px rgba(255, 70, 0, 0.3); /* WARNA AKSEN BARU */
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #DBEAFE; /* blue-100 */
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-white">Generator Outreach Script</h1>
+            <p class="text-lg text-blue-200 mt-2">Buat skrip Email & WhatsApp untuk Outreach ke Customer</p>
+        </header>
+
+        <!-- Kontainer Utama: Input dan Output -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <!-- Kolom Input -->
+            <div class="p-6 rounded-xl shadow-lg bg-black/20 backdrop-blur-lg border border-white/10">
+                <h2 class="text-2xl font-semibold mb-6">Parameter Dinamis</h2>
+                <div class="space-y-5">
+                    
+                    <div>
+                        <label for="platform" class="form-label">Platform</label>
+                        <select id="platform" class="form-select">
+                            <option value="Email">Email (Profesional)</option>
+                            <option value="WhatsApp">WhatsApp (Singkat & Santai)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="languageSelect" class="form-label">Bahasa Skrip</label>
+                        <select id="languageSelect" class="form-select">
+                            <option value="id">Bahasa Indonesia</option>
+                            <option value="en">Bahasa Inggris</option>
+                            <option value="zh">Bahasa Mandarin</option>
+                            <option value="ar">Bahasa Arab</option>
+                            <option value="de">Bahasa Jerman</option>
+                            <option value="ja">Bahasa Jepang</option>
+                            <option value="ko">Bahasa Korea</option>
+                            <option value="es">Bahasa Spanyol</option>
+                            <option value="fr">Bahasa Prancis</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="leadStatus" class="form-label">Status Prospek</label>
+                        <select id="leadStatus" class="form-select">
+                            <option value="Cold Lead (Belum ada kontak)">Cold Lead (Belum ada kontak)</option>
+                            <option value="Warm Lead (Unduh e-book/webinar)">Warm Lead (Unduh e-book/webinar)</option>
+                            <option value="Warm Lead (Bertemu di event)">Warm Lead (Bertemu di event)</option>
+                            <option value="Follow-up (Tidak ada respons)">Follow-up (Tidak ada respons)</option>
+                            <option value="Re-engagement (Mantan klien)">Re-engagement (Mantan klien)</option>
+                            <option value="custom">Status Kustom...</option>
+                        </select>
+                        <input type="text" id="leadStatusCustom" class="form-input mt-2" style="display: none;" placeholder="Masukkan status prospek kustom...">
+                    </div>
+
+                    <div>
+                        <label for="goal" class="form-label">Tujuan Outreach</label>
+                        <select id="goal" class="form-select">
+                            <option value="Menjadwalkan demo/meeting">Menjadwalkan demo/meeting</option>
+                            <option value="Membagikan case study/info produk">Membagikan case study/info produk</option>
+                            <option value="Membangun relasi (non-sales)">Membangun relasi (non-sales)</option>
+                            <option value="Meminta feedback">Meminta feedback</option>
+                            <option value="custom">Tujuan Kustom...</option>
+                        </select>
+                        <input type="text" id="goalCustom" class="form-input mt-2" style="display: none;" placeholder="Masukkan tujuan kustom...">
+                    </div>
+
+                    <div>
+                        <label for="productSelect" class="form-label">Produk/Layanan Anda (PT Utama Globalindo Cargo)</label>
+                        <select id="productSelect" class="form-select">
+                            <option value="LTL (Less Than Truckload)">LTL (Less Than Truckload)</option>
+                            <option value="FTL (Full Truckload)">FTL (Full Truckload)</option>
+                            <option value="Air Freight">Air Freight</option>
+                            <option value="Sea Freight">Sea Freight</option>
+                            <option value="Warehousing & Fulfillment">Warehousing & Fulfillment</option>
+                            <option value="Import Borongan">Import Borongan</option>
+                            <option value="Air Export Door to Door">Air Export Door to Door</option>
+                            <option value="LCL (Less than Container Load)">LCL (Less than Container Load)</option>
+                            <option value="FCL (Full Container Load)">FCL (Full Container Load)</option>
+                            <option value="Sea Export Door to Door">Sea Export Door to Door</option>
+                            <option value="Semua Layanan">Semua Layanan (All Products)</option>
+                            <option value="custom">Layanan Kustom...</option>
+                        </select>
+                        <input type="text" id="productCustom" class="form-input mt-2" style="display: none;" placeholder="Masukkan layanan kustom...">
+                    </div>
+
+                    <div>
+                        <label for="painPointSelect" class="form-label">Perkiraan 'Pain Point' Prospek</label>
+                        <select id="painPointSelect" class="form-select">
+                            <option value="Biaya pengiriman yang tinggi">Biaya pengiriman yang tinggi</option>
+                            <option value="Keterlambatan pengiriman">Keterlambatan pengiriman</option>
+                            <option value="Proses bea cukai (customs) yang rumit">Proses bea cukai (customs) yang rumit</option>
+                            <option value="Tracking pengiriman tidak akurat/real-time">Tracking pengiriman tidak akurat/real-time</option>
+                            <option value="Barang rusak atau hilang saat pengiriman">Barang rusak atau hilang saat pengiriman</option>
+                            <option value="Manajemen inventori gudang tidak efisien">Manajemen inventori gudang tidak efisien</option>
+                            <option value="custom">Pain Point Kustom...</option>
+                        </select>
+                        <input type="text" id="painPointCustom" class="form-input mt-2" style="display: none;" placeholder="Masukkan pain point kustom...">
+                    </div>
+
+                    <div>
+                        <label for="companyName" class="form-label">Nama Perusahaan Prospek</label>
+                        <input type="text" id="companyName" class="form-input" placeholder="Contoh: PT Sukses Makmur">
+                    </div>
+
+                    <div>
+                        <label for="picEmail" class="form-label">Email PIC</label>
+                        <input type="email" id="picEmail" class="form-input" placeholder="Contoh: pic@suksesmakmur.com">
+                    </div>
+
+                    <div>
+                        <label for="picPhone" class="form-label">Nomor HP PIC (WhatsApp)</label>
+                        <input type="tel" id="picPhone" class="form-input" placeholder="Format: 62812xxxxxxxx">
+                    </div>
+                    
+                    <div>
+                        <label for="recipientName" class="form-label">Nama Prospek (PIC)</label>
+                        <input type="text" id="recipientName" class="form-input" placeholder="Bapak/Ibu [Nama] atau [Nama Panggilan]">
+                    </div>
+
+                    <hr class="border-white/10 my-3">
+                    <h3 class="text-xl font-semibold mb-3">Info Anda & Perusahaan Anda</h3>
+
+                    <div>
+                        <label for="senderName" class="form-label">Nama Anda (Sales)</label>
+                        <input type="text" id="senderName" class="form-input" placeholder="[Nama Anda]">
+                    </div>
+
+                    <div>
+                        <label for="salesJobSelect" class="form-label">Jabatan Anda</label>
+                        <select id="salesJobSelect" class="form-select">
+                            <option value="Sales Executive">Sales Executive</option>
+                            <option value="Account Manager">Account Manager</option>
+                            <option value="Business Development">Business Development</option>
+                            <option value="Sales Manager">Sales Manager</option>
+                            <option value="Marketing Executive">Marketing Executive</option>
+                            <option value="custom">Jabatan Kustom...</option>
+                        </select>
+                        <input type="text" id="salesJobCustom" class="form-input mt-2" style="display: none;" placeholder="Masukkan jabatan kustom...">
+                    </div>
+
+                    <div>
+                        <label for="salesEmail" class="form-label">Email Sales Anda</label>
+                        <input type="email" id="salesEmail" class="form-input" placeholder="Contoh: sales@utamaglobalindo.com">
+                    </div>
+
+                    <div>
+                        <label for="salesPhone" class="form-label">Nomor HP Sales Anda (WhatsApp)</label>
+                        <input type="tel" id="salesPhone" class="form-input" placeholder="Format: 6281xxxxxxxx">
+                    </div>
+
+                    <div>
+                        <label for="senderCompanyInput" class="form-label">Nama Perusahaan Asal</label>
+                        <input type="text" id="senderCompanyInput" class="form-input" value="PT Utama Globalindo Cargo">
+                    </div>
+
+                    <div>
+                        <label for="companyWebInput" class="form-label">Web Perusahaan</label>
+                        <input type="text" id="companyWebInput" class="form-input" value="www.utamaglobalindocargo.com">
+                    </div>
+
+                    <div>
+                        <label for="companyPhoneInput" class="form-label">Telepon Perusahaan</label>
+                        <input type="text" id="companyPhoneInput" class="form-input" value="+6221 8350 778">
+                    </div>
+
+                    <div>
+                        <label for="companyAddressInput" class="form-label">Alamat Perusahaan</label>
+                        <textarea id="companyAddressInput" class="form-input" rows="3">Graha Fadillah, Jl Prof Soepomo SH No 45BZ Blok C, Tebet, Jakarta Selatan 12810</textarea>
+                    </div>
+
+                    <button id="generateButton" class="w-full bg-[#ff4600] hover:bg-[#e63e00] text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200 text-lg">
+                        Generate Skrip
+                    </button>
+                </div>
+            </div>
+
+            <!-- Kolom Output -->
+            <div class="p-6 rounded-xl shadow-lg bg-black/20 backdrop-blur-lg border border-white/10">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-semibold">Hasil Skrip</h2>
+                    <div class="flex space-x-2">
+                        <button id="copyButton" class="bg-white/10 hover:bg-white/20 text-gray-200 font-medium py-2 px-4 rounded-lg text-sm transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            Salin Teks
+                        </button>
+                        <button id="sendEmailButton" class="bg-[#ff4600] hover:bg-[#e63e00] text-white font-medium py-2 px-4 rounded-lg text-sm transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            Kirim Email
+                        </button>
+                        <button id="sendWAButton" class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg text-sm transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            Kirim WA
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Area Loading -->
+                <div id="loader" class="flex justify-center items-center h-64" style="display: none;">
+                    <div class="loader"></div>
+                </div>
+
+                <!-- Area Output -->
+                <div id="outputArea" class="h-full">
+                    <div id="message-box" class="text-blue-200 text-center py-20">
+                        Hasil skrip akan muncul di sini setelah Anda menekan tombol "Generate Skrip".
+                    </div>
+                    <!-- 'pre' digunakan untuk menjaga format (spasi dan baris baru) dari AI -->
+                    <pre id="scriptOutput" class="whitespace-pre-wrap text-gray-100 text-base" style="max-height: 600px; overflow-y: auto;"></pre>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Area Teks Tersembunyi untuk proses Copy -->
+    <textarea id="copyBuffer" style="position: absolute; left: -9999px;"></textarea>
+
+    <script>
+        // --- Selektor DOM ---
+        const platformSelect = document.getElementById('platform');
+        const languageSelect = document.getElementById('languageSelect');
+        const leadStatusSelect = document.getElementById('leadStatus');
+        const goalSelect = document.getElementById('goal');
+        
+        const leadStatusCustom = document.getElementById('leadStatusCustom');
+        const goalCustom = document.getElementById('goalCustom');
+
+        const productSelect = document.getElementById('productSelect');
+        const productCustom = document.getElementById('productCustom');
+        const painPointSelect = document.getElementById('painPointSelect');
+        const painPointCustom = document.getElementById('painPointCustom');
+        
+        const companyNameInput = document.getElementById('companyName');
+        const picEmailInput = document.getElementById('picEmail');
+        const picPhoneInput = document.getElementById('picPhone');
+        const recipientNameInput = document.getElementById('recipientName');
+        
+        const senderNameInput = document.getElementById('senderName');
+        const salesJobSelect = document.getElementById('salesJobSelect');
+        const salesJobCustom = document.getElementById('salesJobCustom');
+        const salesEmailInput = document.getElementById('salesEmail');
+        const salesPhoneInput = document.getElementById('salesPhone');
+        const senderCompanyInput = document.getElementById('senderCompanyInput');
+        const companyWebInput = document.getElementById('companyWebInput');
+        const companyPhoneInput = document.getElementById('companyPhoneInput');
+        const companyAddressInput = document.getElementById('companyAddressInput');
+        
+        const generateButton = document.getElementById('generateButton');
+        const copyButton = document.getElementById('copyButton');
+        const sendEmailButton = document.getElementById('sendEmailButton');
+        const sendWAButton = document.getElementById('sendWAButton');
+        
+        const loader = document.getElementById('loader');
+        const outputArea = document.getElementById('outputArea');
+        const scriptOutput = document.getElementById('scriptOutput');
+        const messageBox = document.getElementById('message-box');
+        const copyBuffer = document.getElementById('copyBuffer');
+
+        // --- Variabel API ---
+        // URL API sekarang mengarah ke fungsi serverless (backend proxy) kita
+        const backendApiUrl = `/.netlify/functions/generate-script`;
+        
+        // --- Event Listeners ---
+        generateButton.addEventListener('click', generateScript);
+        copyButton.addEventListener('click', copyToClipboard);
+        sendEmailButton.addEventListener('click', sendEmail);
+        sendWAButton.addEventListener('click', sendWhatsApp);
+
+        // Listener untuk input kustom
+        leadStatusSelect.addEventListener('change', () => {
+            leadStatusCustom.style.display = (leadStatusSelect.value === 'custom') ? 'block' : 'none';
+        });
+
+        goalSelect.addEventListener('change', () => {
+            goalCustom.style.display = (goalSelect.value === 'custom') ? 'block' : 'none';
+        });
+
+        productSelect.addEventListener('change', () => {
+            productCustom.style.display = (productSelect.value === 'custom') ? 'block' : 'none';
+        });
+
+        painPointSelect.addEventListener('change', () => {
+            painPointCustom.style.display = (painPointSelect.value === 'custom') ? 'block' : 'none';
+        });
+
+        salesJobSelect.addEventListener('change', () => {
+            salesJobCustom.style.display = (salesJobSelect.value === 'custom') ? 'block' : 'none';
+        });
+
+        // Listener untuk mengaktifkan/menonaktifkan tombol kirim
+        picEmailInput.addEventListener('input', () => {
+            sendEmailButton.disabled = !picEmailInput.value || !scriptOutput.textContent;
+        });
+
+        picPhoneInput.addEventListener('input', () => {
+            sendWAButton.disabled = !picPhoneInput.value || !scriptOutput.textContent;
+        });
+        
+        /**
+         * Fungsi utama untuk mengambil input, memanggil API, dan menampilkan hasil.
+         */
+        async function generateScript() {
+            // 1. Kumpulkan semua input
+            
+            // Logika untuk input kustom
+            let leadStatusValue = leadStatusSelect.value;
+            if (leadStatusValue === 'custom') {
+                leadStatusValue = leadStatusCustom.value || "[Status Prospek Kustom]";
+            }
+            
+            let goalValue = goalSelect.value;
+            if (goalValue === 'custom') {
+                goalValue = goalCustom.value || "[Tujuan Kustom]";
+            }
+
+            let productValue = productSelect.value;
+            if (productValue === 'custom') {
+                productValue = productCustom.value || "[Layanan Kustom]";
+            }
+            
+            let painPointValue = painPointSelect.value;
+            if (painPointValue === 'custom') {
+                painPointValue = painPointCustom.value || "[Pain Point Kustom]";
+            }
+            
+            let salesJobValue = salesJobSelect.value;
+            if (salesJobValue === 'custom') {
+                salesJobValue = salesJobCustom.value || "[Jabatan Kustom]";
+            }
+
+            const inputs = {
+                platform: platformSelect.value,
+                language: languageSelect.value,
+                leadStatus: leadStatusValue,
+                goal: goalValue,
+                product: productValue,
+                painPoint: painPointValue,
+                companyName: companyNameInput.value || "[Nama Perusahaan Prospek]",
+                picEmail: picEmailInput.value,
+                picPhone: picPhoneInput.value,
+                recipientName: recipientNameInput.value || "[Nama PIC]",
+                
+                senderName: senderNameInput.value || "[Nama Anda]",
+                salesJob: salesJobValue,
+                salesEmail: salesEmailInput.value,
+                salesPhone: salesPhoneInput.value,
+                senderCompany: senderCompanyInput.value,
+                companyWeb: companyWebInput.value,
+                companyPhone: companyPhoneInput.value,
+                companyAddress: companyAddressInput.value
+            };
+
+            // Validasi sederhana
+            if (inputs.product === "[Layanan Kustom]" || inputs.senderName === "[Nama Anda]" || inputs.companyName === "[Nama Perusahaan Prospek]" || !inputs.salesEmail || !inputs.salesPhone) {
+                displayError("Harap isi 'Layanan Anda', 'Nama Perusahaan', 'Nama Anda', 'Email Sales', dan 'HP Sales' untuk hasil terbaik.");
+                return;
+            }
+
+            // 2. Tampilkan status loading
+            showLoading(true);
+
+            // 3. Buat System Prompt (Instruksi Peran AI)
+            // Ini adalah bagian krusial untuk mencocokkan preferensi Anda
+            const systemPrompt = `Anda adalah seorang ahli strategi outreach B2B dan copywriter profesional.
+Tugas Anda adalah menulis skrip outreach (Email atau WhatsApp) berdasarkan parameter yang diberikan.
+PERATURAN UTAMA:
+1. Gaya Penulisan: Profesional, jelas, lugas, dan langsung ke intinya.
+2. Hindari Basa-basi: Jangan gunakan bahasa marketing yang berlebihan, frasa generik (contoh: "Saya harap email ini menjumpai Anda dalam keadaan baik"), atau pujian yang tidak perlu.
+3. Fokus pada Nilai: Langsung tawarkan nilai atau solusi yang relevan dengan 'pain point' prospek.
+4. HANYA TULIS TEKS BIASA: Jangan gunakan formatting Markdown (seperti **bold**, *italic*), HTML, atau (underline).
+5. Format Siap Kirim: Hasil harus bisa langsung disalin dan dikirim.
+    - Jika Email: Sertakan baris "Subjek:" yang jelas dan menarik di awal. Berikan paragraf yang rapi.
+    - Jika WhatsApp: Buat pesan lebih singkat, lebih santai (tapi tetap profesional), dan gunakan poin-poin jika perlu.
+6. Jangan gunakan em dash (—). Gunakan tanda hubung (-) biasa jika perlu.
+7. Selalu sertakan signature di akhir.
+    - Jika Email: Buat signature lengkap (Nama Pengirim, Jabatan Sales, Nama Perusahaan Asal, HP Sales | Email Sales, Web Perusahaan).
+    - Untuk WhatsApp: Buat signature singkat (Nama Pengirim, Jabatan Sales, Nama Perusahaan Asal).
+8. Aturan Bahasa:
+    - Jika Bahasa yang Diminta adalah 'id' (Bahasa Indonesia), tulis HANYA dalam Bahasa Indonesia.
+    - Jika Bahasa yang Diminta BUKAN 'id' (misal: 'en', 'zh', 'ar'):
+        1. Tulis skrip LENGKAP dalam bahasa yang diminta tersebut (termasuk Subjek: jika email).
+        2. Setelah skrip pertama selesai, tambahkan baris pemisah WAJIB: [---SEPARATOR_BAHASA---]
+        3. DI BAWAH pemisah itu, tulis terjemahan skrip yang SAMA PERSIS ke dalam Bahasa Indonesia (termasuk "Subjek (ID):").`;
+
+            // 4. Buat User Prompt (Data Dinamis)
+            const userPrompt = `
+Platform: ${inputs.platform}
+Bahasa yang Diminta: ${inputs.language}
+Status Prospek: ${inputs.leadStatus}
+Tujuan Outreach: ${inputs.goal}
+Nama Prospek: ${inputs.recipientName}
+Nama Perusahaan: ${inputs.companyName}
+Produk/Layanan Kami: ${inputs.product}
+Perkiraan Pain Point Prospek: ${inputs.painPoint}
+
+Info Pengirim:
+Nama Pengirim: ${inputs.senderName}
+Jabatan Sales: ${inputs.salesJob}
+Email Sales: ${inputs.salesEmail}
+HP Sales: ${inputs.salesPhone}
+Nama Perusahaan Asal: ${inputs.senderCompany}
+Web Perusahaan: ${inputs.companyWeb}
+Telepon Perusahaan: ${inputs.companyPhone}
+Alamat Perusahaan: ${inputs.companyAddress}
+
+Tugas: Tuliskan skrip outreach sekarang.
+`;
+
+            // 5. Panggil API Backend Proxy kita
+            try {
+                // Mengirim prompt ke backend proxy kita, bukan lagi ke Google
+                const responseText = await callBackendAPI(systemPrompt, userPrompt);
+                displayResult(responseText);
+            } catch (error) {
+                console.error("Error calling backend API:", error);
+                displayError("Terjadi kesalahan saat menghubungi server proxy. Silakan coba lagi.");
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        /**
+         * Menangani panggilan API ke backend proxy kita.
+         */
+        async function callBackendAPI(systemPrompt, userPrompt, retries = 3, delay = 1000) {
+            // Data yang dikirim ke backend proxy kita
+            const bodyPayload = {
+                systemPrompt: systemPrompt,
+                userPrompt: userPrompt
+            };
+
+            try {
+                const response = await fetch(backendApiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(bodyPayload)
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP error! status: ${response.status}. Pesan: ${errorText}`);
+                }
+
+                const result = await response.json();
+                
+                if (result.text) {
+                    return result.text;
+                } else if (result.error) {
+                    throw new Error(`Error dari backend: ${result.error}`);
+                } else {
+                    throw new Error("Respons backend tidak valid.");
+                }
+
+            } catch (error) {
+                // Implementasi exponential backoff
+                if (retries > 0) {
+                    // Tidak log retry ke konsol
+                    await new Promise(res => setTimeout(res, delay));
+                    return callBackendAPI(systemPrompt, userPrompt, retries - 1, delay * 2);
+                } else {
+                    // Gagal setelah semua retry
+                    throw error;
+                }
+            }
+        }
+
+        /**
+         * Mengatur visibilitas loader dan area output.
+         */
+        function showLoading(isLoading) {
+            if (isLoading) {
+                loader.style.display = 'flex';
+                outputArea.style.display = 'none'; // Sembunyikan output lama
+                generateButton.disabled = true;
+                generateButton.textContent = 'Memproses...';
+                copyButton.disabled = true;
+                sendEmailButton.disabled = true;
+                sendWAButton.disabled = true;
+            } else {
+                loader.style.display = 'none';
+                outputArea.style.display = 'block'; // Tampilkan area output
+                generateButton.disabled = false;
+                generateButton.textContent = 'Generate Skrip';
+                // Tombol aksi lainnya akan diaktifkan di displayResult
+            }
+        }
+
+        /**
+         * Menampilkan hasil teks yang sukses dari AI.
+         */
+        function displayResult(text) {
+            messageBox.style.display = 'none'; // Sembunyikan pesan placeholder
+            scriptOutput.style.color = '#F9FAFB'; // Reset warna teks ke default
+            scriptOutput.textContent = text.trim(); // Tampilkan hasil
+            
+            // Aktifkan tombol berdasarkan input yang relevan
+            copyButton.disabled = false;
+            if (picEmailInput.value) {
+                sendEmailButton.disabled = false;
+            }
+            if (picPhoneInput.value) {
+                sendWAButton.disabled = false;
+            }
+        }
+
+        /**
+         * Menampilkan pesan error di area output.
+         */
+        function displayError(errorMessage) {
+            messageBox.style.display = 'none'; // Sembunyikan placeholder
+            scriptOutput.textContent = `ERROR: ${errorMessage}`;
+            scriptOutput.style.color = '#F87171'; // Warna merah untuk error
+            
+            // Pastikan tombol aksi nonaktif saat error
+            copyButton.disabled = true;
+            sendEmailButton.disabled = true;
+            sendWAButton.disabled = true;
+        }
+
+        /**
+         * Menyalin konten dari area output ke clipboard.
+         */
+        function copyToClipboard() {
+            const textToCopy = scriptOutput.textContent;
+            if (!textToCopy) return;
+
+            // Menggunakan textarea tersembunyi untuk proses copy
+            copyBuffer.value = textToCopy;
+            copyBuffer.select();
+            copyBuffer.setSelectionRange(0, 99999); // Untuk mobile
+
+            try {
+                // Menggunakan execCommand untuk kompatibilitas iframe
+                document.execCommand('copy');
+                copyButton.textContent = 'Tersalin!';
+                setTimeout(() => {
+                    copyButton.textContent = 'Salin Teks';
+                }, 2000);
+            } catch (err) {
+                console.error('Gagal menyalin teks: ', err);
+                copyButton.textContent = 'Gagal';
+                setTimeout(() => {
+                    copyButton.textContent = 'Salin Teks';
+                }, 2000);
+            }
+
+            // Membersihkan seleksi
+            window.getSelection().removeAllRanges();
+        }
+
+        /**
+         * Membuka klien Email default dengan data terisi.
+         */
+        function sendEmail() {
+            const email = picEmailInput.value;
+            const fullScript = scriptOutput.textContent;
+            const selectedLanguage = languageSelect.value;
+            if (!email || !fullScript) return;
+
+            let scriptToSend = fullScript;
+            // Jika bahasa non-ID dipilih DAN separator ada, ambil hanya bagian pertama (bahasa asing)
+            if (selectedLanguage !== 'id' && fullScript.includes('[---SEPARATOR_BAHASA---]')) {
+                scriptToSend = fullScript.split('[---SEPARATOR_BAHASA---]')[0].trim();
+            }
+
+            const lines = scriptToSend.split('\n');
+            let subject = "Informasi Layanan Logistik - PT Utama Globalindo Cargo"; // Default subject
+            let bodyLines = [];
+            let subjectFound = false;
+
+            // Loop untuk memisahkan subjek dari body
+            for (const line of lines) {
+                if (!subjectFound && line.toLowerCase().startsWith('subjek:')) {
+                    subject = line.substring(7).trim();
+                    subjectFound = true; // Tandai bahwa subjek sudah ditemukan
+                } else {
+                    bodyLines.push(line); // Tambahkan baris ini ke body
+                }
+            }
+            
+            let body = bodyLines.join('\n').trim();
+
+            const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            window.open(mailtoLink, '_blank');
+        }
+
+        /**
+          * Membuka WhatsApp Web/Desktop dengan data terisi.
+         */
+        function sendWhatsApp() {
+            const phone = picPhoneInput.value;
+            let fullScript = scriptOutput.textContent;
+            const selectedLanguage = languageSelect.value;
+            if (!phone || !fullScript) return;
+
+            let scriptToSend = fullScript;
+            // Jika bahasa non-ID dipilih DAN separator ada, ambil hanya bagian pertama (bahasa asing)
+            if (selectedLanguage !== 'id' && fullScript.includes('[---SEPARATOR_BAHASA---]')) {
+                scriptToSend = fullScript.split('[---SEPARATOR_BAHASA---]')[0].trim();
+            }
+
+            // Bersihkan nomor telepon (hapus non-digit, pastikan format 62)
+            let cleanPhone = phone.replace(/\D/g, ''); // Hapus semua selain angka
+            if (cleanPhone.startsWith('0')) {
+                cleanPhone = '62' + cleanPhone.substring(1);
+            }
+            // Asumsi jika tidak diawali 0 atau 62, itu adalah nomor lokal (tambahkan 62)
+            if (!cleanPhone.startsWith('62')) {
+                cleanPhone = '62' + cleanPhone;
+            }
+            
+            const lines = scriptToSend.split('\n');
+            let bodyLines = [];
+            let subjectFound = false; // Hanya untuk mendeteksi dan menghapus
+
+            // Loop untuk menghapus baris subjek
+            for (const line of lines) {
+                if (!subjectFound && line.toLowerCase().startsWith('subjek:')) {
+                    subjectFound = true; // Temukan baris subjek, jangan tambahkan ke body
+                } else {
+                    bodyLines.push(line); // Tambahkan baris lain ke body
+                }
+            }
+
+            let body = bodyLines.join('\n').trim();
+
+            const waLink = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(body)}`;
+            window.open(waLink, '_blank');
+        }
+
+    </script>
+</body>
+</html>

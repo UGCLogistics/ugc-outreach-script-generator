@@ -1,0 +1,4 @@
+# Konfigurasi Netlify
+# Memberi tahu Netlify di mana menemukan file fungsi serverless (proxy) Anda
+[functions]
+  directory = "netlify/functions"
