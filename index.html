@@ -45,16 +45,18 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        /* Style untuk input */
+        
+        /* Mengurangi ukuran input dan label */
         .form-input, .form-select {
             background-color: rgba(15, 23, 42, 0.6); /* bg-slate-900/60 */
             border: 1px solid rgba(255, 255, 255, 0.1); /* border-white/10 */
             color: #F9FAFB;
             border-radius: 0.5rem; /* rounded-lg */
-            padding: 0.75rem 1rem;
+            padding: 0.5rem 0.75rem; /* py-2 px-3 (lebih kecil) */
             width: 100%;
             transition: border-color 0.2s, box-shadow 0.2s;
             backdrop-filter: blur(5px);
+            font-size: 0.875rem; /* text-sm */
         }
         .form-input:focus, .form-select:focus {
             outline: none;
@@ -63,27 +65,36 @@
         }
         .form-label {
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem; /* mb-1 (lebih kecil) */
             font-weight: 500;
             color: #DBEAFE; /* blue-100 */
+            font-size: 0.875rem; /* text-sm */
         }
     </style>
 </head>
 <body class="min-h-screen p-4 md:p-8">
 
-    <div class="max-w-4xl mx-auto">
+    <!-- Kontainer utama dengan lebar maksimum baru untuk 3 kolom -->
+    <div class="max-w-7xl mx-auto">
         <header class="text-center mb-8">
+            <!-- Logo Ditambahkan -->
+            <img src="https://i.ibb.co/6y40g3S/UGC-LOGO-WHITE-01-1.png" alt="Logo PT Utama Globalindo Cargo" class="mx-auto h-16 w-auto mb-4"
+                 onerror="this.onerror=null; this.src='https://placehold.co/300x80/020617/FFFFFF?text=Logo+UGC&font=inter';">
+            
             <h1 class="text-3xl md:text-4xl font-bold text-white">Generator Outreach Script</h1>
             <p class="text-lg text-blue-200 mt-2">Buat skrip Email & WhatsApp untuk Outreach ke Customer</p>
         </header>
 
-        <!-- Kontainer Utama: Input dan Output -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Kontainer Input (Atas) -->
+        <div class="p-6 rounded-xl shadow-lg bg-black/20 backdrop-blur-lg border border-white/10 mb-6">
+            <h2 class="text-2xl font-semibold mb-6 text-center">Parameter Dinamis</h2>
             
-            <!-- Kolom Input -->
-            <div class="p-6 rounded-xl shadow-lg bg-black/20 backdrop-blur-lg border border-white/10">
-                <h2 class="text-2xl font-semibold mb-6">Parameter Dinamis</h2>
-                <div class="space-y-5">
+            <!-- Layout 3 kolom untuk input -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
+                
+                <!-- Kolom 1: Activity Detail -->
+                <div class="space-y-4">
+                    <h3 class="text-xl font-semibold text-white border-b border-white/20 pb-2">Activity Detail</h3>
                     
                     <div>
                         <label for="platform" class="form-label">Platform</label>
@@ -134,7 +145,7 @@
                     </div>
 
                     <div>
-                        <label for="productSelect" class="form-label">Produk/Layanan Anda (PT Utama Globalindo Cargo)</label>
+                        <label for="productSelect" class="form-label">Layanan Anda (PT UGC)</label>
                         <select id="productSelect" class="form-select">
                             <option value="LTL (Less Than Truckload)">LTL (Less Than Truckload)</option>
                             <option value="FTL (Full Truckload)">FTL (Full Truckload)</option>
@@ -153,7 +164,7 @@
                     </div>
 
                     <div>
-                        <label for="painPointSelect" class="form-label">Perkiraan 'Pain Point' Prospek</label>
+                        <label for="painPointSelect" class="form-label">'Pain Point' Prospek</label>
                         <select id="painPointSelect" class="form-select">
                             <option value="Biaya pengiriman yang tinggi">Biaya pengiriman yang tinggi</option>
                             <option value="Keterlambatan pengiriman">Keterlambatan pengiriman</option>
@@ -165,10 +176,20 @@
                         </select>
                         <input type="text" id="painPointCustom" class="form-input mt-2" style="display: none;" placeholder="Masukkan pain point kustom...">
                     </div>
+                </div>
 
+                <!-- Kolom 2: Customer Detail -->
+                <div class="space-y-4">
+                    <h3 class="text-xl font-semibold text-white border-b border-white/20 pb-2">Customer Detail</h3>
+                    
                     <div>
                         <label for="companyName" class="form-label">Nama Perusahaan Prospek</label>
                         <input type="text" id="companyName" class="form-input" placeholder="Contoh: PT Sukses Makmur">
+                    </div>
+
+                    <div>
+                        <label for="recipientName" class="form-label">Nama Prospek (PIC)</label>
+                        <input type="text" id="recipientName" class="form-input" placeholder="Bapak/Ibu [Nama]">
                     </div>
 
                     <div>
@@ -177,18 +198,15 @@
                     </div>
 
                     <div>
-                        <label for="picPhone" class="form-label">Nomor HP PIC (WhatsApp)</label>
+                        <label for="picPhone" class="form-label">Nomor HP PIC (WA)</label>
                         <input type="tel" id="picPhone" class="form-input" placeholder="Format: 62812xxxxxxxx">
                     </div>
+                </div>
+
+                <!-- Kolom 3: Sales Detail -->
+                <div class="space-y-4">
+                    <h3 class="text-xl font-semibold text-white border-b border-white/20 pb-2">Sales Detail</h3>
                     
-                    <div>
-                        <label for="recipientName" class="form-label">Nama Prospek (PIC)</label>
-                        <input type="text" id="recipientName" class="form-input" placeholder="Bapak/Ibu [Nama] atau [Nama Panggilan]">
-                    </div>
-
-                    <hr class="border-white/10 my-3">
-                    <h3 class="text-xl font-semibold mb-3">Info Anda & Perusahaan Anda</h3>
-
                     <div>
                         <label for="senderName" class="form-label">Nama Anda (Sales)</label>
                         <input type="text" id="senderName" class="form-input" placeholder="[Nama Anda]">
@@ -213,7 +231,7 @@
                     </div>
 
                     <div>
-                        <label for="salesPhone" class="form-label">Nomor HP Sales Anda (WhatsApp)</label>
+                        <label for="salesPhone" class="form-label">Nomor HP Sales Anda (WA)</label>
                         <input type="tel" id="salesPhone" class="form-input" placeholder="Format: 6281xxxxxxxx">
                     </div>
 
@@ -221,7 +239,7 @@
                         <label for="senderCompanyInput" class="form-label">Nama Perusahaan Asal</label>
                         <input type="text" id="senderCompanyInput" class="form-input" value="PT Utama Globalindo Cargo">
                     </div>
-
+                    
                     <div>
                         <label for="companyWebInput" class="form-label">Web Perusahaan</label>
                         <input type="text" id="companyWebInput" class="form-input" value="www.utamaglobalindocargo.com">
@@ -234,48 +252,51 @@
 
                     <div>
                         <label for="companyAddressInput" class="form-label">Alamat Perusahaan</label>
-                        <textarea id="companyAddressInput" class="form-input" rows="3">Graha Fadillah, Jl Prof Soepomo SH No 45BZ Blok C, Tebet, Jakarta Selatan 12810</textarea>
+                        <input type="text" id="companyAddressInput" class="form-input" value="Graha Fadillah, Jl Prof Soepomo SH No 45BZ Blok C, Tebet, Jakarta Selatan 12810">
                     </div>
+                </div>
 
+                <!-- Tombol Generate (Penuh) -->
+                <div class="md:col-span-3 mt-6">
                     <button id="generateButton" class="w-full bg-[#ff4600] hover:bg-[#e63e00] text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200 text-lg">
                         Generate Skrip
                     </button>
                 </div>
             </div>
+        </div>
 
-            <!-- Kolom Output -->
-            <div class="p-6 rounded-xl shadow-lg bg-black/20 backdrop-blur-lg border border-white/10">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-2xl font-semibold">Hasil Skrip</h2>
-                    <div class="flex space-x-2">
-                        <button id="copyButton" class="bg-white/10 hover:bg-white/20 text-gray-200 font-medium py-2 px-4 rounded-lg text-sm transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                            Salin Teks
-                        </button>
-                        <button id="sendEmailButton" class="bg-[#ff4600] hover:bg-[#e63e00] text-white font-medium py-2 px-4 rounded-lg text-sm transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                            Kirim Email
-                        </button>
-                        <button id="sendWAButton" class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg text-sm transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                            Kirim WA
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Area Loading -->
-                <div id="loader" class="flex justify-center items-center h-64" style="display: none;">
-                    <div class="loader"></div>
-                </div>
-
-                <!-- Area Output -->
-                <div id="outputArea" class="h-full">
-                    <div id="message-box" class="text-blue-200 text-center py-20">
-                        Hasil skrip akan muncul di sini setelah Anda menekan tombol "Generate Skrip".
-                    </div>
-                    <!-- 'pre' digunakan untuk menjaga format (spasi dan baris baru) dari AI -->
-                    <pre id="scriptOutput" class="whitespace-pre-wrap text-gray-100 text-base" style="max-height: 600px; overflow-y: auto;"></pre>
+        <!-- Kontainer Output (Bawah) -->
+        <div class="p-6 rounded-xl shadow-lg bg-black/20 backdrop-blur-lg border border-white/10">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-semibold">Hasil Skrip</h2>
+                <div class="flex space-x-2">
+                    <button id="copyButton" class="bg-white/10 hover:bg-white/20 text-gray-200 font-medium py-2 px-3 rounded-lg text-xs transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                        Salin
+                    </button>
+                    <button id="sendEmailButton" class="bg-[#ff4600] hover:bg-[#e63e00] text-white font-medium py-2 px-3 rounded-lg text-xs transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                        Email
+                    </button>
+                    <button id="sendWAButton" class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-3 rounded-lg text-xs transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                        WA
+                    </button>
                 </div>
             </div>
 
+            <!-- Area Loading -->
+            <div id="loader" class="flex justify-center items-center h-48" style="display: none;">
+                <div class="loader"></div>
+            </div>
+
+            <!-- Area Output -->
+            <div id="outputArea" class="h-full">
+                <div id="message-box" class="text-blue-200 text-center py-20 px-4">
+                    Hasil skrip akan muncul di sini setelah Anda menekan tombol "Generate Skrip".
+                </div>
+                <!-- 'pre' digunakan untuk menjaga format (spasi dan baris baru) dari AI -->
+                <pre id="scriptOutput" class="whitespace-pre-wrap text-gray-100 text-base" style="max-height: 800px; overflow-y: auto;"></pre>
+            </div>
         </div>
+
     </div>
 
     <!-- Area Teks Tersembunyi untuk proses Copy -->
@@ -323,8 +344,8 @@
         const copyBuffer = document.getElementById('copyBuffer');
 
         // --- Variabel API ---
-        // URL API sekarang mengarah ke fungsi serverless (backend proxy) kita
-        const backendApiUrl = `/.netlify/functions/generate-script`;
+        // Panggil proxy Netlify, bukan API Google secara langsung
+        const proxyApiUrl = "/.netlify/functions/generate-script";
         
         // --- Event Listeners ---
         generateButton.addEventListener('click', generateScript);
@@ -426,7 +447,6 @@
             showLoading(true);
 
             // 3. Buat System Prompt (Instruksi Peran AI)
-            // Ini adalah bagian krusial untuk mencocokkan preferensi Anda
             const systemPrompt = `Anda adalah seorang ahli strategi outreach B2B dan copywriter profesional.
 Tugas Anda adalah menulis skrip outreach (Email atau WhatsApp) berdasarkan parameter yang diberikan.
 PERATURAN UTAMA:
@@ -472,61 +492,28 @@ Alamat Perusahaan: ${inputs.companyAddress}
 Tugas: Tuliskan skrip outreach sekarang.
 `;
 
-            // 5. Panggil API Backend Proxy kita
+            // 5. Panggil API Proxy Netlify
             try {
-                // Mengirim prompt ke backend proxy kita, bukan lagi ke Google
-                const responseText = await callBackendAPI(systemPrompt, userPrompt);
-                displayResult(responseText);
-            } catch (error) {
-                console.error("Error calling backend API:", error);
-                displayError("Terjadi kesalahan saat menghubungi server proxy. Silakan coba lagi.");
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        /**
-         * Menangani panggilan API ke backend proxy kita.
-         */
-        async function callBackendAPI(systemPrompt, userPrompt, retries = 3, delay = 1000) {
-            // Data yang dikirim ke backend proxy kita
-            const bodyPayload = {
-                systemPrompt: systemPrompt,
-                userPrompt: userPrompt
-            };
-
-            try {
-                const response = await fetch(backendApiUrl, {
+                // Mengirim kedua prompt ke backend proxy kita
+                const response = await fetch(proxyApiUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(bodyPayload)
+                    body: JSON.stringify({ systemPrompt, userPrompt })
                 });
 
+                const result = await response.json();
+
                 if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`HTTP error! status: ${response.status}. Pesan: ${errorText}`);
+                    throw new Error(result.error || `HTTP error! status: ${response.status}`);
                 }
 
-                const result = await response.json();
-                
-                if (result.text) {
-                    return result.text;
-                } else if (result.error) {
-                    throw new Error(`Error dari backend: ${result.error}`);
-                } else {
-                    throw new Error("Respons backend tidak valid.");
-                }
+                displayResult(result.text);
 
             } catch (error) {
-                // Implementasi exponential backoff
-                if (retries > 0) {
-                    // Tidak log retry ke konsol
-                    await new Promise(res => setTimeout(res, delay));
-                    return callBackendAPI(systemPrompt, userPrompt, retries - 1, delay * 2);
-                } else {
-                    // Gagal setelah semua retry
-                    throw error;
-                }
+                console.error("Error calling proxy API:", error);
+                displayError(`Terjadi kesalahan saat menghubungi server proxy: ${error.message}`);
+            } finally {
+                showLoading(false);
             }
         }
 
@@ -600,13 +587,13 @@ Tugas: Tuliskan skrip outreach sekarang.
                 document.execCommand('copy');
                 copyButton.textContent = 'Tersalin!';
                 setTimeout(() => {
-                    copyButton.textContent = 'Salin Teks';
+                    copyButton.textContent = 'Salin';
                 }, 2000);
             } catch (err) {
                 console.error('Gagal menyalin teks: ', err);
                 copyButton.textContent = 'Gagal';
                 setTimeout(() => {
-                    copyButton.textContent = 'Salin Teks';
+                    copyButton.textContent = 'Salin';
                 }, 2000);
             }
 
@@ -671,7 +658,7 @@ Tugas: Tuliskan skrip outreach sekarang.
                 cleanPhone = '62' + cleanPhone.substring(1);
             }
             // Asumsi jika tidak diawali 0 atau 62, itu adalah nomor lokal (tambahkan 62)
-            if (!cleanPhone.startsWith('62')) {
+            if (!cleanPhone.startsWith('62') && cleanPhone.length > 8) { // Cek panjang minimal
                 cleanPhone = '62' + cleanPhone;
             }
             
