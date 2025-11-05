@@ -119,6 +119,18 @@
                         </select>
                     </div>
 
+                    <!-- Input Gaya Bahasa BARU ditambahkan di sini -->
+                    <div>
+                        <label for="styleSelect" class="form-label">Gaya Bahasa & Pendekatan</label>
+                        <select id="styleSelect" class="form-select">
+                            <option value="Formal">Formal</option>
+                            <option value="Formal-Casual">Formal-Casual</option>
+                            <option value="Consultative">Consultative (Solutif)</option>
+                            <option value="Naratif">Naratif</option>
+                            <option value="Story Telling">Story Telling</option>
+                        </select>
+                    </div>
+
                     <div>
                         <label for="leadStatus" class="form-label">Status Prospek</label>
                         <select id="leadStatus" class="form-select">
@@ -306,6 +318,7 @@
         // --- Selektor DOM ---
         const platformSelect = document.getElementById('platform');
         const languageSelect = document.getElementById('languageSelect');
+        const styleSelect = document.getElementById('styleSelect'); // BARU: Menambahkan style select
         const leadStatusSelect = document.getElementById('leadStatus');
         const goalSelect = document.getElementById('goal');
         
@@ -418,6 +431,7 @@
             const inputs = {
                 platform: platformSelect.value,
                 language: languageSelect.value,
+                style: styleSelect.value, // BARU: Menambahkan nilai style
                 leadStatus: leadStatusValue,
                 goal: goalValue,
                 product: productValue,
@@ -447,10 +461,11 @@
             showLoading(true);
 
             // 3. Buat System Prompt (Instruksi Peran AI)
+            // DIPERBARUI: Rule #1 sekarang dinamis berdasarkan inputs.style
             const systemPrompt = `Anda adalah seorang ahli strategi outreach B2B dan copywriter profesional.
 Tugas Anda adalah menulis skrip outreach (Email atau WhatsApp) berdasarkan parameter yang diberikan.
 PERATURAN UTAMA:
-1. Gaya Penulisan: Profesional, jelas, lugas, dan langsung ke intinya.
+1. Gaya Penulisan: WAJIB gunakan gaya bahasa '${inputs.style}'. Jaga agar tetap profesional, jelas, lugas, dan langsung ke intinya (meskipun gayanya story telling, jangan bertele-tele).
 2. Hindari Basa-basi: Jangan gunakan bahasa marketing yang berlebihan, frasa generik (contoh: "Saya harap email ini menjumpai Anda dalam keadaan baik"), atau pujian yang tidak perlu.
 3. Fokus pada Nilai: Langsung tawarkan nilai atau solusi yang relevan dengan 'pain point' prospek.
 4. HANYA TULIS TEKS BIASA: Jangan gunakan formatting Markdown (seperti **bold**, *italic*), HTML, atau (underline).
@@ -469,9 +484,11 @@ PERATURAN UTAMA:
         3. DI BAWAH pemisah itu, tulis terjemahan skrip yang SAMA PERSIS ke dalam Bahasa Indonesia (termasuk "Subjek (ID):").`;
 
             // 4. Buat User Prompt (Data Dinamis)
+            // DIPERBARUI: Menambahkan style
             const userPrompt = `
 Platform: ${inputs.platform}
 Bahasa yang Diminta: ${inputs.language}
+Gaya Bahasa Diminta: ${inputs.style}
 Status Prospek: ${inputs.leadStatus}
 Tujuan Outreach: ${inputs.goal}
 Nama Prospek: ${inputs.recipientName}
