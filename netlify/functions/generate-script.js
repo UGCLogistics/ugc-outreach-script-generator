@@ -1,90 +1,150 @@
-// --- Ini adalah Backend Proxy Anda ---
-// Kode ini berjalan di server Netlify, BUKAN di browser pengguna.
+// Ini adalah "backend" Anda yang berjalan di server Netlify.
+// Tugasnya adalah menerima permintaan dari index.html,
+// secara rahasia menambahkan Kunci API Anda,
+// dan memanggil Google Gemini API.
 
-// URL API Google Gemini
-const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent`;
+exports.handler = async (event) => {
+    // 1. Keamanan: Hanya izinkan metode POST
+    if (event.httpMethod !== 'POST') {
+        return {
+            statusCode: 405,
+            body: JSON.stringify({ error: 'Method Not Allowed' }),
+        };
+    }
 
-// Fungsi handler Netlify
-exports.handler = async (event, context) => {
-    // 1. Ambil Kunci API Rahasia Anda dari variabel lingkungan Netlify
-    // Kunci ini TIDAK PERNAH dilihat oleh pengguna.
-    const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+    // 2. Ambil Kunci API Rahasia dari pengaturan Netlify
+    // Ini adalah bagian terpenting. Kunci API tidak pernah terekspos ke browser.
+    const apiKey = process.env.GEMINI_API_KEY;
 
-    if (!GEMINI_API_KEY) {
+    if (!apiKey) {
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: "Kunci API Gemini belum diatur di server." }),
+            body: JSON.stringify({ error: 'API Key tidak ditemukan di server.' }),
         };
     }
 
-    // 2. Ambil data (systemPrompt dan userPrompt) yang dikirim dari HTML
-    let body;
-    try {
-        body = JSON.parse(event.body);
-    } catch (e) {
-        return {
-            statusCode: 400,
-            body: JSON.stringify({ error: "Request body tidak valid." }),
-        };
+    // 3. Ambil data input dari frontend
+    const { inputs } = JSON.parse(event.body);
+
+    // 4. Buat System Prompt (Instruksi untuk AI)
+    // Ini adalah "otak" dari generator Anda.
+    const systemPrompt = `
+Anda adalah asisten AI yang ahli dalam copywriting untuk outreach B2B, spesialisasi di industri logistik dan kargo (PT Utama Globalindo Cargo).
+Tugas Anda adalah membuat skrip outreach yang profesional, to the point, dan persuasif berdasarkan parameter yang diberikan.
+
+Parameter yang Diberikan:
+1.  Platform: ${inputs.platform}
+2.  Bahasa Target: ${inputs.bahasa}
+3.  Gaya Bahasa: ${inputs.gaya_bahasa}
+4.  Status Prospek: ${inputs.status_prospek}
+5.  Tujuan Outreach: ${inputs.tujuan_outreach}
+6.  Layanan yang Ditawarkan: ${inputs.layanan}
+7.  Pain Point Customer: ${inputs.pain_point}
+8.  Nama Perusahaan Customer: ${inputs.nama_perusahaan_customer}
+9.  Nama PIC Customer: ${inputs.nama_pic}
+10. Nama Sales: ${inputs.nama_sales}
+11. Jabatan Sales: ${inputs.jabatan_sales}
+12. Info Perusahaan Sales: {
+      Nama: ${inputs.nama_perusahaan_sales},
+      Web: ${inputs.web_perusahaan},
+      Telp: ${inputs.telp_perusahaan},
+      Alamat: ${inputs.alamat_perusahaan},
+      Email Sales: ${inputs.email_sales},
+      HP Sales: ${inputs.hp_sales}
     }
 
-    const { systemPrompt, userPrompt } = body;
+ATURAN KETAT UNTUK OUTPUT:
 
-    if (!systemPrompt || !userPrompt) {
-        return {
-            statusCode: 400,
-            body: JSON.stringify({ error: "systemPrompt dan userPrompt diperlukan." }),
-        };
-    }
+1.  **Struktur (WAJIB):**
+    * Jika Platform adalah 'Email', output HARUS dimulai dengan baris `Subjek: [Tulis Subjek Email di Sini]`.
+    * Jika Platform adalah 'WhatsApp', JANGAN gunakan baris Subjek.
+    * Selalu gunakan sapaan yang sesuai (misal: "Yth. ${inputs.nama_pic}").
+    * Buat isi pesan yang relevan dengan tujuan dan pain point.
+    * Tutup dengan Call to Action (CTA) yang jelas.
+    * Buat signature (tanda tangan) yang sesuai:
+        * Untuk Email: Buat signature lengkap (Nama, Jabatan, Perusahaan, HP, Email, Web).
+        * Untuk WhatsApp: Buat signature singkat (Nama, Jabatan, Perusahaan).
 
-    // 3. Siapkan payload untuk dikirim ke Google Gemini
+2.  **Bahasa dan Format (WAJIB):**
+    * Hasilkan skrip HANYA dalam Bahasa Target (${inputs.bahasa}).
+    * JANGAN gunakan formatting bold (**), italic (*), atau underline (_). Hasilkan HANYA sebagai plain text.
+    * JANGAN gunakan em dash (—). Gunakan tanda hubung biasa (-) jika perlu.
+    * Gunakan gaya bahasa yang diminta: ${inputs.gaya_bahasa}.
+
+3.  **Aturan Multi-Bahasa (PENTING):**
+    * Jika Bahasa Target (${inputs.bahasa}) BUKAN 'id' (Bahasa Indonesia):
+    * Anda HARUS menghasilkan skrip dalam bahasa target (${inputs.bahasa}) terlebih dahulu.
+    * Setelah skrip bahasa target selesai, tambahkan separator unik: `[---SEPARATOR_BAHASA---]`
+    * Setelah separator, tambahkan terjemahan lengkap skrip tersebut dalam Bahasa Indonesia (termasuk Subjek jika ada).
+    * Contoh (jika target 'en'):
+        Subjek: [English Subject]
+        [English Body]
+        [English Signature]
+        [---SEPARATOR_BAHASA---]
+        Subjek: [Indonesian Subject]
+        [Indonesian Body]
+        [Indonesian Signature]
+    * Jika Bahasa Target adalah 'id', JANGAN tambahkan separator atau terjemahan.
+
+4.  **Konten:** Fokus pada solusi yang ditawarkan ${inputs.nama_perusahaan_sales} untuk ${inputs.pain_point} melalui ${inputs.layanan}. Buat agar relevan dan tidak terkesan spam.
+
+Buat skrip SEKARANG.
+`;
+
+    // 5. Buat payload untuk Google Gemini API
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
     const payload = {
-        contents: [{
-            parts: [{ text: userPrompt }]
-        }],
-        systemInstruction: {
-            parts: [{ text: systemPrompt }]
-        }
+        contents: [
+            {
+                role: "user",
+                parts: [{ text: systemPrompt }]
+            }
+        ],
+        generationConfig: {
+            temperature: 0.7,
+            topK: 1,
+            topP: 1,
+            maxOutputTokens: 2048,
+        },
     };
 
-    // 4. Panggil API Gemini dari server
+    // 6. Panggil API Google
     try {
-        const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+        const apiResponse = await fetch(apiUrl, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
         });
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            console.error("Error dari Gemini:", errorData);
+        if (!apiResponse.ok) {
+            // Jika Google API mengembalikan error
+            const errorText = await apiResponse.text();
+            console.error('Google API Error:', errorText);
             return {
-                statusCode: response.status,
-                body: JSON.stringify({ error: `Gagal memanggil API Gemini. Status: ${response.status}` }),
+                statusCode: apiResponse.status,
+                body: JSON.stringify({ error: `Google API Error: ${errorText}` }),
             };
         }
 
-        const result = await response.json();
+        const data = await apiResponse.json();
 
-        // 5. Ekstrak teks dan kirim kembali ke HTML (Frontend)
-        if (result.candidates && result.candidates[0].content.parts[0].text) {
-            const text = result.candidates[0].content.parts[0].text;
-            return {
-                statusCode: 200,
-                body: JSON.stringify({ text: text }),
-            };
-        } else {
-            return {
-                statusCode: 500,
-                body: JSON.stringify({ error: "Respons dari Gemini tidak valid atau diblokir (safety filter)." }),
-            };
-        }
+        // Ekstrak teks skrip dari respons
+        const scriptText = data.candidates[0].content.parts[0].text;
+
+        // 7. Kembalikan hasil ke frontend
+        return {
+            statusCode: 200,
+            body: JSON.stringify({ script: scriptText.trim() }),
+        };
 
     } catch (error) {
-        console.error("Error internal server:", error);
+        console.error('Server-side Error:', error);
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: `Terjadi error pada proxy server: ${error.message}` }),
+            body: JSON.stringify({ error: `Kesalahan internal server: ${error.message}` }),
         };
     }
 };
