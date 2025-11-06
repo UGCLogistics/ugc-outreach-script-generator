@@ -24,7 +24,15 @@ exports.handler = async (event) => {
     }
 
     // 3. Ambil data input dari frontend
-    const { inputs } = JSON.parse(event.body);
+    let inputs;
+    try {
+        inputs = JSON.parse(event.body).inputs;
+    } catch (e) {
+        return {
+            statusCode: 400,
+            body: JSON.stringify({ error: 'Request body tidak valid.' }),
+        };
+    }
 
     // 4. Buat System Prompt (Instruksi untuk AI)
     // Ini adalah "otak" dari generator Anda.
@@ -56,7 +64,7 @@ Parameter yang Diberikan:
 ATURAN KETAT UNTUK OUTPUT:
 
 1.  **Struktur (WAJIB):**
-    * Jika Platform adalah 'Email', output HARUS dimulai dengan baris `Subjek: [Tulis Subjek Email di Sini]`.
+    * Jika Platform adalah 'Email', output HARUS dimulai dengan baris \`Subjek: [Tulis Subjek Email di Sini]\`.
     * Jika Platform adalah 'WhatsApp', JANGAN gunakan baris Subjek.
     * Selalu gunakan sapaan yang sesuai (misal: "Yth. ${inputs.nama_pic}").
     * Buat isi pesan yang relevan dengan tujuan dan pain point.
@@ -74,16 +82,12 @@ ATURAN KETAT UNTUK OUTPUT:
 3.  **Aturan Multi-Bahasa (PENTING):**
     * Jika Bahasa Target (${inputs.bahasa}) BUKAN 'id' (Bahasa Indonesia):
     * Anda HARUS menghasilkan skrip dalam bahasa target (${inputs.bahasa}) terlebih dahulu.
-    * Setelah skrip bahasa target selesai, tambahkan separator unik: `[---SEPARATOR_BAHASA---]`
+    * Setelah skrip bahasa target selesai, tambahkan separator unik: \`[---SEPARATOR_BAHASA---]\`
     * Setelah separator, tambahkan terjemahan lengkap skrip tersebut dalam Bahasa Indonesia (termasuk Subjek jika ada).
     * Contoh (jika target 'en'):
-        Subjek: [English Subject]
-        [English Body]
-        [English Signature]
-        [---SEPARATOR_BAHASA---]
-        Subjek: [Indonesian Subject]
-        [Indonesian Body]
-        [Indonesian Signature]
+    * (SKRIP BAHASA INGGRIS DIMULAI DARI SINI)
+    * [---SEPARATOR_BAHASA---]
+    * (TERJEMAHAN BAHASA INDONESIA DIMULAI DARI SINI)
     * Jika Bahasa Target adalah 'id', JANGAN tambahkan separator atau terjemahan.
 
 4.  **Konten:** Fokus pada solusi yang ditawarkan ${inputs.nama_perusahaan_sales} untuk ${inputs.pain_point} melalui ${inputs.layanan}. Buat agar relevan dan tidak terkesan spam.
@@ -130,6 +134,14 @@ Buat skrip SEKARANG.
         }
 
         const data = await apiResponse.json();
+        
+        if (!data.candidates || !data.candidates[0].content || !data.candidates[0].content.parts) {
+            console.error('Respon API tidak valid:', data);
+            return {
+                statusCode: 500,
+                body: JSON.stringify({ error: 'Respon tidak valid dari Google API.' }),
+            };
+        }
 
         // Ekstrak teks skrip dari respons
         const scriptText = data.candidates[0].content.parts[0].text;
