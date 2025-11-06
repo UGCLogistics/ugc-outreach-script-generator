@@ -118,7 +118,7 @@
         <!-- HEADER DAN LOGO -->
         <div class="text-center flex flex-col items-center mb-6">
             <!-- Gunakan link gambar dari GitHub yang sudah divalidasi -->
-            <img src="https://i.imgur.com/w9cW0Qy.png" alt="Logo UGC Logistics" class="h-16 w-auto mb-4" 
+            <img src="logo.png" alt="Logo UGC Logistics" class="h-16 w-auto mb-4" 
                  onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
             <!-- Fallback text jika gambar gagal dimuat -->
             <div style="display: none;" class="text-xl font-bold text-slate-300">Logo UGC</div>
@@ -433,7 +433,7 @@
                 });
 
                 if (!response.ok) {
-                    // Menangani error dari server (misal: 403, 500)
+                    // Menangani error dari server (misal: 403, 500, 502)
                     const errorBody = await response.json();
                     throw new Error(`HTTP error! status: ${response.status}, body: ${JSON.stringify(errorBody, null, 2)}`);
                 }
