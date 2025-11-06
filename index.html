@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale-1.0">
     <title>UGC Outreach Script Generator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -97,6 +97,17 @@
             background-color: #1EAE53;
             border-color: #1EAE53;
         }
+
+        /* PERBAIKAN: Style dropdown options agar serasi dengan tema gelap */
+        select option {
+            /* Catatan: Ini adalah kompromi. 
+            Kita tidak bisa membuat <option> menjadi "glassy" karena diatur oleh OS.
+            Tapi kita bisa membuatnya gelap agar serasi dengan tema.
+            */
+            background-color: #1E293B; /* slate-800 */
+            color: #E2E8F0; /* slate-200 */
+        }
+
         /* Loader */
         .loader {
             width: 20px;
@@ -117,7 +128,10 @@
         
         <!-- HEADER DAN LOGO -->
         <div class="text-center flex flex-col items-center mb-6">
-            <!-- Gunakan link gambar dari GitHub yang sudah divalidasi -->
+            <!-- 
+                Logo sekarang diambil dari folder yang sama dengan index.html.
+                Pastikan Anda sudah meng-upload 'logo.png' ke root repositori GitHub Anda.
+            -->
             <img src="logo.png" alt="Logo UGC Logistics" class="h-16 w-auto mb-4" 
                  onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
             <!-- Fallback text jika gambar gagal dimuat -->
