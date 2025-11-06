@@ -1,4 +1,12 @@
-# Konfigurasi Netlify
-# Memberi tahu Netlify di mana menemukan file fungsi serverless (proxy) Anda
+# Konfigurasi ini memberi tahu Netlify di mana menemukan fungsi backend Anda
 [functions]
   directory = "netlify/functions"
+
+# Ini adalah aturan "rewrite" agar file index.html Anda
+# dapat memanggil fungsi backend dengan link yang lebih sederhana (/api/...)
+# Namun, dalam setup kita, kita memanggilnya langsung
+# jadi ini adalah konfigurasi minimal yang diperlukan.
+
+[build]
+  # Direktori tempat file statis Anda (index.html) berada
+  publish = "."
